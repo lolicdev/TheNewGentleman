@@ -1,6 +1,6 @@
-#include <Core.h>
-#include <Papyrus.h>
-#include <Util.h>
+#include "Core.h"
+#include "Papyrus.h"
+#include "Util.h"
 
 Papyrus* papyrus = Papyrus::GetSingleton();
 

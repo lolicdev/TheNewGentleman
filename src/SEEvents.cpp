@@ -1,6 +1,6 @@
-#include <Core.h>
-#include <SEEvents.h>
-#include <Util.h>
+#include "Core.h"
+#include "SEEvents.h"
+#include "Util.h"
 
 SEEvents* events = SEEvents::GetSingleton();
 

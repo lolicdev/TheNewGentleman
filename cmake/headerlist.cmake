@@ -1,10 +1,10 @@
 set(headers ${headers}
-  inc/Hooks.h
-  inc/Papyrus.h
-  inc/SEEvents.h
-  inc/Core.h
-  inc/Inis.h
-  inc/Util.h
-  inc/BaseUtil.h
-  inc/PCH.h
+  src/Hooks.h
+  src/Papyrus.h
+  src/SEEvents.h
+  src/Core.h
+  src/Inis.h
+  src/Util.h
+  src/BaseUtil.h
+  src/PCH.h
 )

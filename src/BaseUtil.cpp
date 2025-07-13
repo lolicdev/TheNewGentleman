@@ -1,4 +1,4 @@
-#include <BaseUtil.h>
+#include "BaseUtil.h"
 
 RE::BGSKeyword* Common::BaseUtil::ProduceOrGetKw(const std::string& keyword) {
   auto& allKeywords = SEDH()->GetFormArray<RE::BGSKeyword>();

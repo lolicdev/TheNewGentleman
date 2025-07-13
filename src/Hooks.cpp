@@ -1,5 +1,5 @@
-#include <Core.h>
-#include <Hooks.h>
+#include "Core.h"
+#include "Hooks.h"
 
 void Hooks::Install() { InstallHook<Load3D>(); }
 

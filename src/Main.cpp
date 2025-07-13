@@ -1,8 +1,8 @@
-#include <Core.h>
-#include <Hooks.h>
-#include <Papyrus.h>
-#include <SEEvents.h>
-#include <Util.h>
+#include "Core.h"
+#include "Hooks.h"
+#include "Papyrus.h"
+#include "SEEvents.h"
+#include "Util.h"
 
 bool CheckRequirements() {
   if (!ut->SEDH()->LookupModByName(Common::mainFile)) {
@@ -18,12 +18,12 @@ bool CheckRequirements() {
 }
 
 void InitializeLogging() {
+  const auto plugin = SKSE::PluginDeclaration::GetSingleton();
   auto path{SKSE::log::log_directory()};
   if (!path) {
     SKSE::stl::report_and_fail("Unable to lookup SKSE logs directory.");
   }
-  *path /= Version::PROJECT;
-  *path += ".log"sv;
+  *path /= std::format("{}.log", plugin->GetName());
 
   std::shared_ptr<spdlog::logger> log;
   log = std::make_shared<spdlog::logger>("Global", std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true));
@@ -68,32 +68,14 @@ void EventListener(SKSE::MessagingInterface::Message* message) {
   }
 }
 
-extern "C" __declspec(dllexport) constinit auto SKSEPlugin_Version = []() {
-  SKSE::PluginVersionData v;
-  v.PluginVersion(Version::MAJOR);
-  v.PluginName(Version::PROJECT);
-  v.AuthorName("ModiLogist");
-  v.UsesAddressLibrary();
-  v.UsesUpdatedStructs();
-  v.CompatibleVersions({SKSE::RUNTIME_SSE_LATEST});
-  return v;
-}();
-
-extern "C" __declspec(dllexport) bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface*, SKSE::PluginInfo* info) {
-  info->infoVersion = SKSE::PluginInfo::kVersion;
-  info->name = Version::PROJECT.data();
-  info->version = Version::MAJOR;
-  return true;
-}
 
 extern "C" [[maybe_unused]] __declspec(dllexport) bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
+  const auto plugin = SKSE::PluginDeclaration::GetSingleton();
   InitializeLogging();
   SKSE::Init(skse, false);
-  SKSE::log::info("Initializing TheNewGentleman {}!", Version::NAME.data());
+  SKSE::log::info("Initializing TheNewGentleman {}!", plugin->GetName());
   SKSE::log::info("Game version : {}", skse->RuntimeVersion().string());
   SKSE::GetMessagingInterface()->RegisterListener(EventListener);
   SKSE::GetPapyrusInterface()->Register(Papyrus::BindPapyrus);
   return true;
 }
-
-extern "C" __declspec(dllexport) const char* APIENTRY GetPluginVersion() { return Version::NAME.data(); }

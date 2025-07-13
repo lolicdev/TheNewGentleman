@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Inis.h>
-#include <Util.h>
+#include "Inis.h"
+#include "Util.h"
 
 class Core : public Singleton<Core>, public Inis {
   public:

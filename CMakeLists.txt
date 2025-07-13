@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 # Set your project name. This will be the name of your SKSE .dll file.
-project(TemplatePlugin VERSION 0.0.1 LANGUAGES CXX)
+project(TheNewGentleMan VERSION 4.2.3 LANGUAGES CXX)
 
 #
 
@@ -41,13 +41,21 @@ include(cmake/sourcelist.cmake)
 add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources}) # <--- specifies plugin.cpp
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23) # <--- use C++23 standard
-target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h) # <--- PCH.h is required!
-
-target_include_directories(
-	"${PROJECT_NAME}"
-	PRIVATE
-	${SIMPLEINI_INCLUDE_DIRS}
+find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
+target_precompile_headers(
+    ${PROJECT_NAME}
+    PRIVATE
+    src/PCH.h
+    ${SIMPLEINI_INCLUDE_DIRS}/SimpleIni.h
 )
+
+# target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h) # <--- PCH.h is required!
+
+# target_include_directories(
+# 	"${PROJECT_NAME}"
+# 	PRIVATE
+# 	${SIMPLEINI_INCLUDE_DIRS}
+# )
 
 
 # When your SKSE .dll is compiled, this will automatically copy the .dll into your mods folder.

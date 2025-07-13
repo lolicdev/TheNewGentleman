@@ -1,4 +1,4 @@
-#include <Inis.h>
+#include "Inis.h"
 
 void Inis::LoadMainIni() {
   SKSE::log::info("Loading TNG settings...");
