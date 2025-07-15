@@ -11,8 +11,6 @@ namespace logger = SKSE::log;
 using namespace std::literals;
 using namespace REL::literals;
 
-// #include <Version.h>
-
 typedef std::pair<RE::FormID, std::string_view> SEFormLocView;
 typedef std::pair<RE::FormID, std::string> SEFormLoc;
 
