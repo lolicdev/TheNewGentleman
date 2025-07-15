@@ -18,22 +18,6 @@ bool CheckRequirements()
 	return true;
 }
 
-void InitializeLogging()
-{
-	const auto plugin = SKSE::PluginDeclaration::GetSingleton();
-	auto path{ SKSE::log::log_directory() };
-	if (!path) {
-		SKSE::stl::report_and_fail("Unable to lookup SKSE logs directory.");
-	}
-	*path /= std::format("{}.log", plugin->GetName());
-
-	std::shared_ptr<spdlog::logger> log;
-	log = std::make_shared<spdlog::logger>("Global", std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true));
-	log->set_level(core->GetLogLvl());
-	log->flush_on(spdlog::level::trace);
-	spdlog::set_default_logger(std::move(log));
-	spdlog::set_pattern("[%H:%M:%S.%e] [%l] %v");
-}
 
 void EventListener(SKSE::MessagingInterface::Message* message)
 {
@@ -49,7 +33,7 @@ void EventListener(SKSE::MessagingInterface::Message* message)
 			core->Process();
 			events->RegisterEvents();
 			Hooks::Install();
-			SKSE::log::info("TheNewGentleman finished initialization.");
+			logger::info("TheNewGentleman finished initialization.");
 		}
 		break;
 
@@ -87,11 +71,28 @@ void EventListener(SKSE::MessagingInterface::Message* message)
 extern "C" [[maybe_unused]] __declspec(dllexport) bool SKSEPlugin_Load(const SKSE::LoadInterface* skse)
 {
 	const auto plugin = SKSE::PluginDeclaration::GetSingleton();
-	InitializeLogging();
+
+  const auto InitLogger = [&plugin]() -> bool {
+    auto path = logger::log_directory();
+    if (!path)
+      return false;
+    *path /= std::format("{}.log", plugin->GetName());
+    auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
+    auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
+
+    log->set_level(core->GetLogLvl());
+    log->flush_on(spdlog::level::trace);
+    spdlog::set_default_logger(std::move(log));
+    spdlog::set_pattern("[%H:%M:%S.%e] [%l] %v");
+
+    logger::info("Initializing {} v{}", plugin->GetName(), plugin->GetVersion());
+    return true;
+  };
+
 	SKSE::Init(skse, false);
-	SKSE::log::info("Initializing TheNewGentleman {}!", plugin->GetName());
-	SKSE::log::info("Game version : {}", skse->RuntimeVersion().string());
+	logger::info("Game version : {}", skse->RuntimeVersion().string());
 	SKSE::GetMessagingInterface()->RegisterListener(EventListener);
 	SKSE::GetPapyrusInterface()->Register(Papyrus::BindPapyrus);
+  
 	return true;
 }
