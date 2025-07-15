@@ -72,27 +72,27 @@ extern "C" [[maybe_unused]] __declspec(dllexport) bool SKSEPlugin_Load(const SKS
 {
 	const auto plugin = SKSE::PluginDeclaration::GetSingleton();
 
-  const auto InitLogger = [&plugin]() -> bool {
-    auto path = logger::log_directory();
-    if (!path)
-      return false;
-    *path /= std::format("{}.log", plugin->GetName());
-    auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
-    auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
+	const auto InitLogger = [&plugin]() -> bool {
+		auto path = logger::log_directory();
+		if (!path)
+			return false;
+		*path /= std::format("{}.log", plugin->GetName());
+		auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
+		auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
 
-    log->set_level(core->GetLogLvl());
-    log->flush_on(spdlog::level::trace);
-    spdlog::set_default_logger(std::move(log));
-    spdlog::set_pattern("[%H:%M:%S.%e] [%l] %v");
+		log->set_level(core->GetLogLvl());
+		log->flush_on(spdlog::level::trace);
+		spdlog::set_default_logger(std::move(log));
+		spdlog::set_pattern("[%H:%M:%S.%e] [%l] %v");
 
-    logger::info("Initializing {} v{}", plugin->GetName(), plugin->GetVersion());
-    return true;
-  };
+		logger::info("Initializing {} v{}", plugin->GetName(), plugin->GetVersion());
+		return true;
+	};
 
 	SKSE::Init(skse, false);
 	logger::info("Game version : {}", skse->RuntimeVersion().string());
 	SKSE::GetMessagingInterface()->RegisterListener(EventListener);
 	SKSE::GetPapyrusInterface()->Register(Papyrus::BindPapyrus);
-  
+
 	return true;
 }
